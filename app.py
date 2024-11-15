@@ -7,11 +7,11 @@ from selenium.webdriver.common.by import By
 
 app = Flask(__name__)
 PDF_LINKS_FILE = 'pdf_links.txt'
-DOWNLOAD_FOLDER = './downloads'
+DOWNLOAD_FOLDER = '/app/downloads'
 os.makedirs(DOWNLOAD_FOLDER, exist_ok=True)
 
 # Path to the ChromeDriver executable
-CHROMEDRIVER_PATH = '/app/chromedriver-linux64'  # Update this path
+CHROMEDRIVER_PATH = '/app/chromedriver-linux64/chromedriver.exe'  # Update this path
 
 # Function to extract PDF links using Selenium in headless mode
 def extract_pdf_links():
