@@ -7,7 +7,7 @@ ENV PYTHONUNBUFFERED=1
 # Install dependencies
 RUN apt-get update && \
     apt-get install -y wget gnupg unzip curl && \
-    wget -O /tmp/google-chrome-stable_130.0.6723.117-1_amd64.deb https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_130.0.6723.117-1_amd64.deb && \
+    wget -O /tmp/google-chrome-stable_130.0.6723.117-1_amd64.deb https://www.filepuma.com/download/google_chrome_64bit_130.0.6723.117-42667/ && \
     dpkg -i /tmp/google-chrome-stable_130.0.6723.117-1_amd64.deb || apt-get -f install -y && \
     rm /tmp/google-chrome-stable_130.0.6723.117-1_amd64.deb && \
     wget -O /tmp/chromedriver.zip https://chromedriver.storage.googleapis.com/130.0.6723.117/chromedriver_linux64.zip && \
