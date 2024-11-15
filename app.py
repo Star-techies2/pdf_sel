@@ -15,10 +15,18 @@ CHROMEDRIVER_PATH = '/usr/local/bin/chromedriver'  # Update this path
 
 # Function to extract PDF links using Selenium in headless mode
 def extract_pdf_links():
-    service = Service(executable_path=CHROMEDRIVER_PATH)
     options = Options()
-    options.add_argument('--headless')
-    options.headless = True
+    options.headless = True  # Run in headless mode
+    options.add_argument('--no-sandbox')
+    options.add_argument('--disable-dev-shm-usage')
+    options.add_argument('--disable-gpu')
+    options.add_argument('--window-size=1920,1080')
+    options.add_argument('--headless')  # Ensure headless mode is enabled
+    options.add_argument('--disable-software-rasterizer')
+    options.add_argument('--disable-extensions')
+    options.add_argument('--disable-setuid-sandbox')
+    options.add_argument('--remote-debugging-port=9222')
+    service = Service(executable_path=CHROMEDRIVER_PATH)
     driver = webdriver.Chrome(service=service, options=options)
     driver.get('https://providers.bcbsla.com/resources/professional-provider-office-manual-24')  # Replace with the URL you want to scrape
     pdf_links = driver.find_elements(By.XPATH, "//a[contains(@href, '.pdf')]")
