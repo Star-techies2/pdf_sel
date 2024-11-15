@@ -1,15 +1,16 @@
+# Use the official Python image from the Docker Hub
 FROM python:3.11.4-slim
 
+# Set environment variable to ensure Python output is sent straight to the terminal
 ENV PYTHONUNBUFFERED=1
 
 # Install dependencies
 RUN apt-get update && \
     apt-get install -y wget gnupg unzip curl && \
-    wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | apt-key add - && \
-    sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list' && \
-    apt-get update && \
-    apt-get install -y google-chrome-stable && \
-    wget -O /tmp/chromedriver.zip https://chromedriver.storage.googleapis.com/131.0.6778.69/chromedriver_linux64.zip && \
+    wget -O /tmp/google-chrome-stable_130.0.6723.117-1_amd64.deb https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_130.0.6723.117-1_amd64.deb && \
+    dpkg -i /tmp/google-chrome-stable_130.0.6723.117-1_amd64.deb || apt-get -f install -y && \
+    rm /tmp/google-chrome-stable_130.0.6723.117-1_amd64.deb && \
+    wget -O /tmp/chromedriver.zip https://chromedriver.storage.googleapis.com/130.0.6723.117/chromedriver_linux64.zip && \
     unzip /tmp/chromedriver.zip -d /usr/local/bin/ && \
     rm /tmp/chromedriver.zip && \
     apt-get install -y --no-install-recommends \
@@ -27,14 +28,14 @@ RUN apt-get update && \
         libxcomposite1 \
         libxdamage1 \
         libxrandr2 \
-        xdg-utils \
-        && apt-get clean && \
+        xdg-utils && \
+    apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Set working directory
+# Set the working directory inside the container
 WORKDIR /app
 
-# Copy requirements file and install Python dependencies
+# Copy the requirements file and install Python dependencies
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
