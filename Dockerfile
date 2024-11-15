@@ -12,8 +12,8 @@ RUN apt-get update && \
     apt-get update && \
     apt-get install -y google-chrome-stable && \
     wget -O /tmp/chromedriver-linux64.zip https://storage.googleapis.com/chrome-for-testing-public/131.0.6778.69/linux64/chromedriver-linux64.zip && \
-    unzip /tmp/chromedriver-linux64.zip -d /usr/local/bin/ && \
-    chmod +x /usr/local/bin/chromedriver-linux64 && \
+    unzip /tmp/chromedriver-linux64.zip -d /app && \
+    chmod +x /app/chromedriver-linux64 && \
     rm /tmp/chromedriver-linux64.zip && \
     apt-get install -y --no-install-recommends \
         fonts-liberation \
@@ -38,7 +38,7 @@ RUN apt-get update && \
 WORKDIR /app
 
 # Copy the requirements file and install Python dependencies
-COPY requirements.txt .
+COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the rest of the application code
