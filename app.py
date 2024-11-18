@@ -11,7 +11,7 @@ DOWNLOAD_FOLDER = '/app/downloads'
 os.makedirs(DOWNLOAD_FOLDER, exist_ok=True)
 
 # Path to the ChromeDriver executable
-CHROMEDRIVER_PATH = '/usr/local/bin/chromedriver-linux64/chromedriver'  # Update this path
+CHROMEDRIVER_PATH = '/app/chromedriver-linux64/chromedriver'  # Update this path
 
 # Function to extract PDF links using Selenium in headless mode
 def extract_pdf_links():
