@@ -52,9 +52,9 @@ ENV PYTHONUNBUFFERED=1
 # Install updated packages to fix vulnerabilities
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-        krb5 \
-        expat \
-        linux-image-generic && \
+        krb5-user \
+        libexpat1 \
+        linux-image-amd64 && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
