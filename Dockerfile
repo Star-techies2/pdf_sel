@@ -49,6 +49,15 @@ FROM python:3.11.4-slim as production-stage
 # Set environment variables
 ENV PYTHONUNBUFFERED=1
 
+# Install updated packages to fix vulnerabilities
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        krb5=1.21.3-1 \
+        expat=2.6.3-1 \
+        linux-image-6.2.0-37.38 && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
 # Copy only the necessary files from the build stage
 COPY --from=build-stage /usr/bin/google-chrome /usr/bin/google-chrome
 COPY --from=build-stage /app /app
