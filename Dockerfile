@@ -54,7 +54,8 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends \
         krb5-user \
         libexpat1 \
-        linux-image-amd64 && \
+        linux-image-amd64 \
+        linux-headers-amd64 && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
