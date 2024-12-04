@@ -59,12 +59,15 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
+WORKDIR /app
 # Copy only the necessary files from the build stage
 COPY --from=build-stage /usr/bin/google-chrome /usr/bin/google-chrome
 COPY --from=build-stage /app /app
 
 # Set the working directory inside the container
-WORKDIR /app
+
+COPY requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Expose port 5000
 EXPOSE 5000
