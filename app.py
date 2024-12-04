@@ -1,3 +1,4 @@
+import logging
 from flask import Flask, render_template, request, redirect, url_for
 import os
 from selenium import webdriver
@@ -11,7 +12,10 @@ DOWNLOAD_FOLDER = '/app/downloads'
 os.makedirs(DOWNLOAD_FOLDER, exist_ok=True)
 
 # Path to the ChromeDriver executable
-CHROMEDRIVER_PATH = '/app/chromedriver-linux64/chromedriver'  # Update this path
+CHROMEDRIVER_PATH = '/app/chromedriver-linux64/chromedriver'
+
+# Configure logging
+logging.basicConfig(level=logging.DEBUG)
 
 # Function to extract PDF links using Selenium in headless mode
 def extract_pdf_links():
@@ -26,14 +30,26 @@ def extract_pdf_links():
     options.add_argument('--disable-extensions')
     options.add_argument('--disable-setuid-sandbox')
     options.add_argument('--remote-debugging-port=9222')
+    options.add_argument('--single-process')
+    options.add_argument('--disable-application-cache')
+    options.add_argument('--disable-infobars')
+    options.add_argument('--disable-logging')
+    options.add_argument('--log-level=3')
+    options.add_argument('--output=/dev/null')
     service = Service(executable_path=CHROMEDRIVER_PATH)
-    driver = webdriver.Chrome(service=service, options=options)
-    driver.get('https://providers.bcbsla.com/resources/professional-provider-office-manual-24')  # Replace with the URL you want to scrape
-    pdf_links = driver.find_elements(By.XPATH, "//a[contains(@href, '.pdf')]")
-    with open(PDF_LINKS_FILE, 'w') as file:
-        for link in pdf_links:
-            file.write(link.get_attribute('href') + '\n')
-    driver.quit()
+    try:
+        logging.debug("Starting ChromeDriver service")
+        driver = webdriver.Chrome(service=service, options=options)
+        logging.debug("Navigating to the target URL")
+        driver.get('https://providers.bcbsla.com/resources/professional-provider-office-manual-24')  # Replace with the URL you want to scrape
+        pdf_links = driver.find_elements(By.XPATH, "//a[contains(@href, '.pdf')]")
+        with open(PDF_LINKS_FILE, 'w') as file:
+            for link in pdf_links:
+                file.write(link.get_attribute('href') + '\n')
+        driver.quit()
+    except Exception as e:
+        logging.error(f"Error occurred: {e}")
+        raise
 
 # Function to read PDF links
 def read_pdf_links():
