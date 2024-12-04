@@ -12,7 +12,7 @@ RUN apt-get update && \
     apt-get install -y google-chrome-stable && \
     wget -O /tmp/chromedriver-linux64.zip https://storage.googleapis.com/chrome-for-testing-public/131.0.6778.69/linux64/chromedriver-linux64.zip && \
     unzip /tmp/chromedriver-linux64.zip -d /app && \
-    chmod +x /app/chromedriver-linux64 && \
+    chmod +x /app/chromedriver-linux64/chromedriver && \
     rm /tmp/chromedriver-linux64.zip && \
     apt-get install -y --no-install-recommends \
         fonts-liberation \
@@ -65,6 +65,12 @@ WORKDIR /app
 # Copy only the necessary files from the build stage
 COPY --from=build-stage /usr/bin/google-chrome /usr/bin/google-chrome
 COPY --from=build-stage /app /app
+
+# Debugging: Check if Chrome and ChromeDriver are present
+RUN echo "Checking if Chrome is present:" && \
+    ls -l /usr/bin/google-chrome && \
+    echo "Checking if ChromeDriver is present:" && \
+    ls -l /app/chromedriver-linux64/chromedriver
 
 # Copy the requirements file and install Python dependencies
 COPY requirements.txt ./
