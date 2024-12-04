@@ -65,6 +65,7 @@ COPY --from=build-stage /usr/bin/google-chrome /usr/bin/google-chrome
 COPY --from=build-stage /app /app
 
 # Set the working directory inside the container
+WORKDIR /app
 
 COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
