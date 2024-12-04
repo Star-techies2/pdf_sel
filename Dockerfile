@@ -1,8 +1,9 @@
-# Build stage
-FROM python:3.11.4-slim as build-stage
-
+# Use the official Python image from the Docker Hub
+FROM python:3.11.4-slim
+ 
+# Set environment variable to ensure Python output is sent straight to the terminal
 ENV PYTHONUNBUFFERED=1
-
+ 
 # Install dependencies
 RUN apt-get update && \
     apt-get install -y wget gnupg unzip curl && \
@@ -14,26 +15,7 @@ RUN apt-get update && \
     unzip /tmp/chromedriver-linux64.zip -d /app && \
     chmod +x /app/chromedriver-linux64 && \
     rm /tmp/chromedriver-linux64.zip && \
-    apt-get clean && \
     rm -rf /var/lib/apt/lists/*
-
-# Set the working directory inside the container
-WORKDIR /app
-
-# Copy the requirements file and install Python dependencies
-COPY requirements.txt ./
-RUN pip install --no-cache-dir -r requirements.txt
-
-# Copy the rest of the application code
-COPY . .
-
-# Production stage
-FROM python:3.11.4-slim as production-stage
-
-# Set environment variables
-ENV PYTHONUNBUFFERED=1
-
-# Install updated packages to fix vulnerabilities
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
         krb5-user \
@@ -58,22 +40,19 @@ RUN apt-get update && \
         xdg-utils && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
-
-# Copy only the necessary files from the build stage
-COPY --from=build-stage /usr/bin/google-chrome /usr/bin/google-chrome
-COPY --from=build-stage /app /app
-COPY --from=build-stage /usr/local/lib/python3.11/site-packages /usr/local/lib/python3.11/site-packages
-COPY --from=build-stage /usr/local/bin /usr/local/bin
-
+ 
 # Set the working directory inside the container
 WORKDIR /app
-
+ 
 # Copy the requirements file and install Python dependencies
 COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
-
+ 
+# Copy the rest of the application code
+COPY . .
+ 
 # Expose port 5000
 EXPOSE 5000
-
+ 
 # Set the command to run the Flask app
 CMD ["python", "app.py"]
