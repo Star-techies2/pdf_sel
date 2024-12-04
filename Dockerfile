@@ -11,11 +11,6 @@ RUN apt-get update && \
     unzip /tmp/chromedriver-linux64.zip -d /app && \
     chmod +x /app/chromedriver-linux64 && \
     rm /tmp/chromedriver-linux64.zip && \
-    apt-get install -y --no-install-recommends \
-        krb5-user \
-        libexpat1 \
-        linux-image-amd64 \
-        linux-headers-amd64 && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
