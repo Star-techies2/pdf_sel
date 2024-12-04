@@ -3,7 +3,7 @@ FROM python:3.11.4-slim as build-stage
 
 ENV PYTHONUNBUFFERED=1
 
-# Install basic dependencies
+# Install dependencies
 RUN apt-get update && \
     apt-get install -y wget gnupg unzip curl && \
     wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | apt-key add - && \
@@ -12,8 +12,10 @@ RUN apt-get update && \
     apt-get install -y google-chrome-stable && \
     wget -O /tmp/chromedriver-linux64.zip https://storage.googleapis.com/chrome-for-testing-public/131.0.6778.69/linux64/chromedriver-linux64.zip && \
     unzip /tmp/chromedriver-linux64.zip -d /app && \
-    chmod +x /app/chromedriver-linux64/chromedriver && \
-    rm /tmp/chromedriver-linux64.zip
+    chmod +x /app/chromedriver-linux64 && \
+    rm /tmp/chromedriver-linux64.zip && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 # Set the working directory inside the container
 WORKDIR /app
@@ -31,7 +33,7 @@ FROM python:3.11.4-slim as production-stage
 # Set environment variables
 ENV PYTHONUNBUFFERED=1
 
-# Install updated packages to fix vulnerabilities and necessary dependencies
+# Install updated packages to fix vulnerabilities
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
         krb5-user \
@@ -57,12 +59,14 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Set the working directory inside the container
-WORKDIR /app
-
 # Copy only the necessary files from the build stage
 COPY --from=build-stage /usr/bin/google-chrome /usr/bin/google-chrome
 COPY --from=build-stage /app /app
+COPY --from=build-stage /usr/local/lib/python3.11/site-packages /usr/local/lib/python3.11/site-packages
+COPY --from=build-stage /usr/local/bin /usr/local/bin
+
+# Set the working directory inside the container
+WORKDIR /app
 
 # Copy the requirements file and install Python dependencies
 COPY requirements.txt ./
