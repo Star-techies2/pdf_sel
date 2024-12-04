@@ -31,7 +31,7 @@ artifacts:
 
 env:
   variables:
-    AWS_ACCOUNT_ID: "253490770605"
+    AWS_ACCOUNT_ID: "739275479532"
     AWS_DEFAULT_REGION: "us-east-1"
   image: aws/codebuild/standard:5.0
   compute_type: BUILD_GENERAL1_LARGE
