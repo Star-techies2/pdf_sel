@@ -71,6 +71,4 @@ EXPOSE 5000
  
 # Command to run the Flask app
 CMD ["python", "app.py"]
- 
-# Entry point to handle Chrome in headless mode
-ENTRYPOINT ["sh", "-c", "Xvfb :99 -screen 0 1280x1024x16 & python app.py"]
+
