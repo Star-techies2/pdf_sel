@@ -1,10 +1,9 @@
-# Build stage
-FROM python:3.11.4-slim as build-stage
- 
-# Set environment variables
+# Stage 1: Build
+FROM python:3.11.4-slim AS build
+
+# Set environment variable to ensure Python output is sent straight to the terminal
 ENV PYTHONUNBUFFERED=1
-ENV DISPLAY=:99
- 
+
 # Install dependencies
 RUN apt-get update && \
     apt-get install -y wget gnupg unzip curl && \
@@ -21,6 +20,36 @@ RUN apt-get update && \
         libexpat1 \
         linux-image-amd64 \
         linux-headers-amd64 && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Set the working directory inside the container
+WORKDIR /app
+
+# Copy the requirements file and install Python dependencies
+COPY requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy the rest of the application code
+COPY . .
+
+# Stage 2: Production
+FROM python:3.11.4-slim AS production
+
+# Set environment variable to ensure Python output is sent straight to the terminal
+ENV PYTHONUNBUFFERED=1
+
+# Install only the necessary runtime dependencies
+RUN apt-get update && \
+    apt-get install -y wget gnupg unzip curl && \
+    wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | apt-key add - && \
+    sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list' && \
+    apt-get update && \
+    apt-get install -y google-chrome-stable && \
+    wget -O /tmp/chromedriver-linux64.zip https://storage.googleapis.com/chrome-for-testing-public/131.0.6778.69/linux64/chromedriver-linux64.zip && \
+    unzip /tmp/chromedriver-linux64.zip -d /app && \
+    chmod +x /app/chromedriver-linux64 && \
+    rm /tmp/chromedriver-linux64.zip && \
     apt-get install -y --no-install-recommends \
         fonts-liberation \
         libappindicator3-1 \
@@ -39,36 +68,18 @@ RUN apt-get update && \
         xdg-utils && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
- 
-# Copy project files to the working directory
-COPY . /app
- 
-# Set the working directory
-WORKDIR /app
- 
-# Install Python dependencies
-RUN pip install --no-cache-dir -r requirements.txt
- 
-# Production stage
-FROM python:3.11.4-slim as production-stage
- 
-# Set environment variables
-ENV PYTHONUNBUFFERED=1
-ENV DISPLAY=:99
- 
-# Copy files from build stage
-COPY --from=build-stage /app /app
-COPY --from=build-stage /usr/local/bin/chromedriver /usr/local/bin/chromedriver
-COPY --from=build-stage /usr/bin/google-chrome-stable /usr/bin/google-chrome-stable
- 
-# Set the working directory
+
+# Set the working directory inside the container
 WORKDIR /app
 
-RUN pip install --no-cache-dir -r requirements.txt 
-# Expose the port that Flask runs on
+# Copy only the necessary files from the build stage
+COPY --from=build /usr/bin/google-chrome /usr/bin/google-chrome
+COPY --from=build /app /app
+COPY --from=build /usr/local/lib/python3.11/site-packages /usr/local/lib/python3.11/site-packages
+COPY --from=build /usr/local/bin /usr/local/bin
 
+# Expose port 5000
 EXPOSE 5000
- 
-# Command to run the Flask app
-CMD ["python", "app.py"]
 
+# Set the command to run the Flask app
+CMD ["python", "app.py"]
