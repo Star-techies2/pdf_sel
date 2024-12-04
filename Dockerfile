@@ -59,14 +59,14 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
+# Set the working directory inside the container
 WORKDIR /app
+
 # Copy only the necessary files from the build stage
 COPY --from=build-stage /usr/bin/google-chrome /usr/bin/google-chrome
 COPY --from=build-stage /app /app
 
-# Set the working directory inside the container
-WORKDIR /app
-
+# Copy the requirements file and install Python dependencies
 COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
