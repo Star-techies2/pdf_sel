@@ -1,9 +1,10 @@
-# Use the official Python image from the Docker Hub
-FROM python:3.11.4-slim
-
-# Set environment variable to ensure Python output is sent straight to the terminal
+# Build stage
+FROM python:3.11.4-slim as build-stage
+ 
+# Set environment variables
 ENV PYTHONUNBUFFERED=1
-
+ENV DISPLAY=:99
+ 
 # Install dependencies
 RUN apt-get update && \
     apt-get install -y wget gnupg unzip curl && \
@@ -38,19 +39,40 @@ RUN apt-get update && \
         xdg-utils && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
-
-# Set the working directory inside the container
+ 
+# Copy project files to the working directory
+COPY . /app
+ 
+# Set the working directory
+WORKDIR /app
+ 
+# Install Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+ 
+# Production stage
+FROM python:3.11.4-slim as production-stage
+ 
+# Set environment variables
+ENV PYTHONUNBUFFERED=1
+ENV DISPLAY=:99
+ 
+# Copy files from build stage
+COPY --from=build-stage /app /app
+COPY --from=build-stage /usr/local/bin/chromedriver /usr/local/bin/chromedriver
+COPY --from=build-stage /usr/bin/google-chrome-stable /usr/bin/google-chrome-stable
+ 
+# Set the working directory
 WORKDIR /app
 
-# Copy the requirements file and install Python dependencies
-COPY requirements.txt ./
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt 
+# Expose the port that Flask runs on
 
-# Copy the rest of the application code
 COPY . .
 
-# Expose port 5000
 EXPOSE 5000
-
-# Set the command to run the Flask app
+ 
+# Command to run the Flask app
 CMD ["python", "app.py"]
+ 
+# Entry point to handle Chrome in headless mode
+ENTRYPOINT ["sh", "-c", "Xvfb :99 -screen 0 1280x1024x16 & python app.py"]
