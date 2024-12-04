@@ -46,10 +46,6 @@ RUN apt-get update && \
     sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list' && \
     apt-get update && \
     apt-get install -y google-chrome-stable && \
-    wget -O /tmp/chromedriver-linux64.zip https://storage.googleapis.com/chrome-for-testing-public/131.0.6778.69/linux64/chromedriver-linux64.zip && \
-    unzip /tmp/chromedriver-linux64.zip -d /app && \
-    chmod +x /app/chromedriver-linux64 && \
-    rm /tmp/chromedriver-linux64.zip && \
     apt-get install -y --no-install-recommends \
         fonts-liberation \
         libappindicator3-1 \
@@ -73,7 +69,6 @@ RUN apt-get update && \
 WORKDIR /app
 
 # Copy only the necessary files from the build stage
-COPY --from=build /usr/bin/google-chrome /usr/bin/google-chrome
 COPY --from=build /app /app
 COPY --from=build /usr/local/lib/python3.11/site-packages /usr/local/lib/python3.11/site-packages
 COPY --from=build /usr/local/bin /usr/local/bin
