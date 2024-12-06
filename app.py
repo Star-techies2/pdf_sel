@@ -6,6 +6,7 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service as ChromeService
 from selenium.webdriver.common.by import By
 from webdriver_manager.chrome import ChromeDriverManager
+from playwright.sync_api import sync_playwright
 
 app = Flask(__name__)
 PDF_LINKS_FILE = 'pdf_links.txt'
@@ -85,6 +86,23 @@ def extract_pdf_links_with_manager():
         logging.error(f"Error occurred: {e}")
         raise
 
+# Function to extract PDF links using Playwright
+def extract_pdf_links_with_playwright():
+    try:
+        with sync_playwright() as p:
+            browser = p.chromium.launch(headless=True, executable_path=CHROMEDRIVER_PATH)
+            page = browser.new_page()
+            logging.debug("Navigating to the target URL with Playwright")
+            page.goto('https://providers.bcbsla.com/resources/professional-provider-office-manual-24')  # Replace with the URL you want to scrape
+            pdf_links = page.locator("//a[contains(@href, '.pdf')]").all()
+            with open(PDF_LINKS_FILE, 'w') as file:
+                for link in pdf_links:
+                    file.write(link.get_attribute('href') + '\n')
+            browser.close()
+    except Exception as e:
+        logging.error(f"Error occurred: {e}")
+        raise
+
 # Function to read PDF links
 def read_pdf_links():
     if os.path.exists(PDF_LINKS_FILE):
@@ -110,6 +128,11 @@ def extract_pdfs():
 @app.route('/extract_pdfs_with_manager', methods=['POST'])
 def extract_pdfs_with_manager():
     extract_pdf_links_with_manager()
+    return redirect(url_for('index'))
+
+@app.route('/extract_pdfs_with_playwright', methods=['POST'])
+def extract_pdfs_with_playwright():
+    extract_pdf_links_with_playwright()
     return redirect(url_for('index'))
 
 @app.route('/show_pdfs', methods=['POST'])
