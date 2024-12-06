@@ -91,7 +91,7 @@ def extract_pdf_links_with_manager():
 def extract_pdf_links_with_playwright():
     try:
         with sync_playwright() as p:
-            browser = p.chromium.launch(headless=True, executable_path=CHROMEDRIVER_PATH)
+            browser = p.chromium.launch(headless=True, executable_path=CHROME_BINARY_PATH)
             page = browser.new_page()
             logging.debug("Navigating to the target URL with Playwright")
             page.goto('https://providers.bcbsla.com/resources/professional-provider-office-manual-24')  # Replace with the URL you want to scrape
