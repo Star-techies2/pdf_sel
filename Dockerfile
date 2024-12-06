@@ -69,7 +69,6 @@ COPY --from=build /app /app
 COPY --from=build /usr/local/lib/python3.11/site-packages /usr/local/lib/python3.11/site-packages
 COPY --from=build /usr/local/bin /usr/local/bin
 
-RUN playwright install --with-deps
 
 # Expose port 5000
 EXPOSE 5000
