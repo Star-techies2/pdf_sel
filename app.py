@@ -37,7 +37,7 @@ def extract_pdf_links():
     options.add_argument('--disable-logging')
     options.add_argument('--log-level=3')
     options.add_argument('--output=/dev/null')
-    service = Service(executable_path=CHROMEDRIVER_PATH)
+    service = ChromeService(executable_path=CHROMEDRIVER_PATH)
     try:
         logging.debug("Starting ChromeDriver service")
         driver = webdriver.Chrome(service=service, options=options)
