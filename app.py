@@ -16,6 +16,7 @@ os.makedirs(DOWNLOAD_FOLDER, exist_ok=True)
 # Path to the ChromeDriver executable
 CHROMEDRIVER_PATH = '/app/chromedriver-linux64/chromedriver'
 
+CHROME_BINARY_PATH = '/usr/bin/google-chrome-stable'
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
 
