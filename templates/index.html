@@ -12,6 +12,9 @@
     <form action="{{ url_for('extract_pdfs_with_manager') }}" method="post">
         <button type="submit">Extract PDFs (Headless with Manager)</button>
     </form>
+    <form action="{{ url_for('extract_pdfs_with_playwright') }}" method="post">
+        <button type="submit">Extract PDFs (Playwright)</button>
+    </form>
     <form action="{{ url_for('show_pdfs') }}" method="post">
         <button type="submit">Show PDF Links</button>
     </form>
