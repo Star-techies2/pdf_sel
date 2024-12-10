@@ -1,5 +1,4 @@
 Flask
-selenium
-requests
-webdriver-manager
-playwright
+scrapy
+boto3
+pydispatch
