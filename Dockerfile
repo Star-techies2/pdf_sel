@@ -17,4 +17,4 @@ COPY . /app/
 EXPOSE 5000
 
 # Change directory to myproject/spiders and run the Flask app
-CMD ["sh", "-c", "cd myproject/spiders && flask run --host=0.0.0.0 --app app.py"]
+CMD ["sh", "-c", "cd myproject/spiders && python app.py"]
