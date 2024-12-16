@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>PDF Extractor</title>
+</head>
+<body>
+    <h1>PDF Extractor</h1>
+    <form action="{{ url_for('extract_pdfs') }}" method="post">
+        <button type="submit">Extract PDFs (Headless with Path)</button>
+    </form>
+    <form action="{{ url_for('extract_pdfs_with_manager') }}" method="post">
+        <button type="submit">Extract PDFs (Headless with Manager)</button>
+    </form>
+    <form action="{{ url_for('extract_pdfs_with_playwright') }}" method="post">
+        <button type="submit">Extract PDFs (Playwright)</button>
+    </form>
+    <form action="{{ url_for('show_pdfs') }}" method="post">
+        <button type="submit">Show PDF Links</button>
+    </form>
+    <form action="{{ url_for('delete_pdfs') }}" method="post">
+        <button type="submit">Delete PDF Links</button>
+    </form>
+</body>
+</html>
