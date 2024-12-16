@@ -1,4 +1,5 @@
 Flask
-scrapy
-boto3
-pydispatch
+selenium
+requests
+webdriver-manager
+playwright
